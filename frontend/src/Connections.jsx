@@ -27,16 +27,11 @@ export default function Connections({ positions, hoveredIdx, adjacencyList }) {
     if (!lineGeometry || lineGeometry.attributes.position.count === 0) return null;
 
     return (
-        <lineSegments 
-            geometry={lineGeometry} 
-            onUpdate={(line) => line.computeLineDistances()}
-        >
-            <lineDashedMaterial 
-                color="#4A5568" 
-                dashSize={0.2}
-                gapSize={0.2}
+        <lineSegments geometry={lineGeometry}>
+            <lineBasicMaterial 
+                color="#00f2ff" 
                 transparent={true} 
-                opacity={0.3} 
+                opacity={0.8} 
             />
         </lineSegments>
     );

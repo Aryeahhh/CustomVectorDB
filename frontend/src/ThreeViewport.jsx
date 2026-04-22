@@ -2,10 +2,14 @@ import React from 'react';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
 import HNSWMaster from './HNSWMaster';
+import PulseAnimation from './PulseAnimation';
 
 export default function ThreeViewport() {
     return (
-        <Canvas camera={{ position: [5, 5, 5], fov: 50 }}>
+        <Canvas 
+            camera={{ position: [5, 5, 5], fov: 50 }}
+            raycaster={{ params: { Points: { threshold: 0.15 } } }}
+        >
             {/* Matte Black Background */}
             <color attach="background" args={['#0A0A0A']} />
             
@@ -21,6 +25,7 @@ export default function ThreeViewport() {
             />
 
             <HNSWMaster />
+            <PulseAnimation />
             
             {/* Professional Camera Controls */}
             <OrbitControls 
