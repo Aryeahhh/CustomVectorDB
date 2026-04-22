@@ -1,5 +1,5 @@
 """
-Unit tests testing the FastAPI layer natively via TestClient.
+FastAPI endpoint tests via TestClient.
 """
 
 import unittest

@@ -1,5 +1,5 @@
-fastapi
-pydantic
-uvicorn
-numpy
-httpx
+fastapi==0.129.0
+pydantic==2.12.5
+uvicorn[standard]==0.41.0
+numpy==2.2.3
+httpx==0.28.1

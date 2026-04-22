@@ -185,10 +185,7 @@ class HNSW:
                     self.graphs[lc][vector.id] = []
 
     def search_with_path(self, query_values: npt.NDArray[np.float64], k: int = 5) -> Tuple[List[Vector], List[Tuple[str, int]]]:
-        """
-        Executes HNSW search while securely documenting the structural graph traversal sequence natively.
-        Returns: Tuple[Results Array, Traversal Node Trace]
-        """
+        """Returns (results_with_distances, traversal_path) for the given query."""
         if self.entry_point is None:
             return [], []
             
@@ -205,5 +202,6 @@ class HNSW:
             
         best_nodes = self._search_layer(query_values, [current_ep], max(self.ef_construction, k), 0, visited_log=visited_trace)
         
-        top_k_ids = [n_id for _, n_id in best_nodes[:k]]
-        return [self.nodes[n_id] for n_id in top_k_ids], visited_trace
+        top_k = best_nodes[:k]
+        results = [(self.nodes[n_id], dist) for dist, n_id in top_k]
+        return results, visited_trace

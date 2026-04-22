@@ -1,38 +1,37 @@
 import React from 'react';
 import { Canvas } from '@react-three/fiber';
-import { OrbitControls } from '@react-three/drei';
+import { OrbitControls, OrthographicCamera } from '@react-three/drei';
 import HNSWMaster from './HNSWMaster';
-import PulseAnimation from './PulseAnimation';
 
 export default function ThreeViewport() {
     return (
-        <Canvas 
-            camera={{ position: [5, 5, 5], fov: 50 }}
-            raycaster={{ params: { Points: { threshold: 0.15 } } }}
+        <Canvas
+            shadows
+            raycaster={{ params: { Points: { threshold: 0.3 } } }}
         >
-            {/* Matte Black Background */}
-            <color attach="background" args={['#0A0A0A']} />
-            
-            <ambientLight intensity={0.5} />
-            <directionalLight position={[10, 10, 5]} intensity={1} />
-            
-            {/* Floor GridHelper explicitly locked at y=0 */}
-            <gridHelper
-                position={[0, 0, 0]}
-                args={[20, 20, '#D97706', '#4A5568']}
-                material-opacity={0.15}
-                material-transparent={true}
+            <color attach="background" args={['#0F1115']} />
+
+            <OrthographicCamera
+                makeDefault
+                position={[25, 8, 5]}
+                zoom={32}
+                near={0.1}
+                far={1000}
             />
 
+            <ambientLight intensity={0.5} />
+            <directionalLight position={[15, 25, 10]} intensity={1.0} />
+            <pointLight position={[-10, 15, -10]} intensity={0.4} color="#00f2ff" />
+
             <HNSWMaster />
-            <PulseAnimation />
-            
-            {/* Professional Camera Controls */}
-            <OrbitControls 
-                makeDefault 
-                enableDamping={true} 
-                dampingFactor={0.05} 
-                maxPolarAngle={Math.PI / 2} // Blocks the camera from dipping below the floor surface
+
+            <OrbitControls
+                enableRotate={true}
+                enableDamping={true}
+                dampingFactor={0.05}
+                screenSpacePanning={true}
+                maxPolarAngle={Math.PI * 0.85}
+                minPolarAngle={Math.PI * 0.1}
             />
         </Canvas>
     );

@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: aetheros-backend
+    runtime: python
+    region: oregon
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn src.api.main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: STORE_PATH
+        value: ./data/vector_store.pkl
+      - key: PYTHON_VERSION
+        value: "3.11"

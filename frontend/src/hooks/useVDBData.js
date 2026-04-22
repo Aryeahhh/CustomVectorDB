@@ -1,66 +1,50 @@
 import { useEffect } from 'react';
 import { useVectorStore } from '../store/store';
-import mockGraph from '../assets/mock_graph.json'; // The guaranteed offline fallback
+import mockGraph from '../assets/mock_graph.json';
+import { LAYER_GAP } from '../HNSWMaster';
 
-// Preserving our geometric probabilistic distribution math (for mock logic only)
 const getMockLayer = (index, m_L = 1.0) => {
     const rand = Math.abs(Math.sin(index * 12.9898 + 78.233)) % 1;
-    let layer = Math.floor(-Math.log(1 - rand) * m_L);
-    return Math.min(layer, 3);
+    return Math.min(Math.floor(-Math.log(1 - rand) * m_L), 5);
 };
 
 export const useVDBData = () => {
     const setGraphData = useVectorStore((state) => state.setGraphData);
+    const initLayerFilters = useVectorStore((state) => state.initLayerFilters);
 
     useEffect(() => {
         const fetchGraphData = async () => {
             try {
-                // If VITE_API_URL is supplied via Render.com / Vercel hooks, we hit the true python database natively
                 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
-                
                 const response = await fetch(`${API_URL}/graph`);
-                
                 if (!response.ok) throw new Error("API Offline");
-                
+
                 const data = await response.json();
-                
-                if (!data.nodes || data.nodes.length === 0) {
-                    console.warn("Database empty. Falling back to dimensional JSON mock array.");
-                    throw new Error("Empty Database");
-                }
+                if (!data.nodes || data.nodes.length === 0) throw new Error("Empty");
 
-                const mappedData = data.nodes.map((node) => {
-                    const layer = node.layer;
-                    const yOffset = layer * 1.0;
-                    return {
-                        id: node.id,
-                        layer: layer,
-                        pos: [node.pos[0], yOffset, node.pos[2]],
-                        neighbors: node.neighbors
-                    };
-                });
-                
-                setGraphData(mappedData);
-                
-            } catch (err) {
-                // FALLBACK: Massive static geometric serialization if Python drops off the network
-                const mappedData = mockGraph.nodes.map((node, index) => {
+                const mapped = data.nodes.map((node) => ({
+                    id: node.id,
+                    layer: node.layer,
+                    pos: [node.pos[0], node.layer * LAYER_GAP, node.pos[2]],
+                    neighbors: node.neighbors
+                }));
+                const maxL = mapped.reduce((m, n) => Math.max(m, n.layer), 0);
+                initLayerFilters(maxL);
+                setGraphData(mapped);
+            } catch {
+                setGraphData(mockGraph.nodes.map((node, index) => {
                     const layer = node.layer !== undefined ? node.layer : getMockLayer(index, 1.5);
-                    const yOffset = layer * 1.0;
-
                     const neighbors = [];
                     for (let i = 0; i < 4; i++) {
                         neighbors.push((index + Math.floor(Math.random() * 20)) % mockGraph.nodes.length);
                     }
-
                     return {
                         id: node.id,
-                        layer: layer,
-                        pos: [node.x, yOffset, node.y], 
-                        neighbors: neighbors
+                        layer,
+                        pos: [node.x, layer * LAYER_GAP, node.y],
+                        neighbors
                     };
-                });
-                setGraphData(mappedData);
+                }));
             }
         };
 

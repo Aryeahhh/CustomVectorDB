@@ -1,9 +1,5 @@
 """
-Mathematical metrics module for vector operations.
-
-This module provides strictly vectorized operations using NumPy to compute
-distances and similarities between vectors. It avoids Python loops to leverage
-the C-level performance of NumPy.
+Vectorized distance and similarity metrics using NumPy.
 """
 
 import numpy as np
