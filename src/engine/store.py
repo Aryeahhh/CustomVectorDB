@@ -48,17 +48,33 @@ class VectorStore:
             
         q_arr = np.array(query_vals, dtype=np.float64)
         
-        # O(log N) fast retrieval
-        # Request a buffer of extra neighbors to compensate for soft-deletions
         buffer_k = k + len(self.deleted_ids) 
-        
         search_k = min(buffer_k, max(len(self.hnsw.nodes), 1))
-        raw_results = self.hnsw.search(q_arr, k=search_k)
+        
+        # Unpack the new API which natively generates trace paths
+        raw_results, _ = self.hnsw.search_with_path(q_arr, k=search_k)
         
         # Filter deleted points dynamically
         valid_results = [res for res in raw_results if res.id not in self.deleted_ids]
         
         return valid_results[:k]
+
+    def query_with_path(self, query_vals: List[float], k: int = 5):
+        """
+        Executes a query and directly exposes the physical path of nodes traversed in the topology.
+        Returns: Tuple[List[Vector], List[Tuple[Node_ID, Layer]]]
+        """
+        if len(query_vals) != self.dim:
+            raise ValueError("Dimensionality mismatch.")
+            
+        q_arr = np.array(query_vals, dtype=np.float64)
+        buffer_k = k + len(self.deleted_ids) 
+        search_k = min(buffer_k, max(len(self.hnsw.nodes), 1))
+        
+        raw_results, trace = self.hnsw.search_with_path(q_arr, k=search_k)
+        valid_results = [res for res in raw_results if res.id not in self.deleted_ids]
+        
+        return valid_results[:k], trace
 
     def delete(self, vector_id: str) -> bool:
         """

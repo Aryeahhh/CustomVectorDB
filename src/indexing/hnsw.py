@@ -60,7 +60,7 @@ class HNSW:
         f = self.rng.uniform(0.0000001, 1.0)
         return math.floor(-math.log(f) * self.m_l)
         
-    def _search_layer(self, query: npt.NDArray[np.float64], entry_pts: List[str], ef: int, layer: int) -> List[Tuple[float, str]]:
+    def _search_layer(self, query: npt.NDArray[np.float64], entry_pts: List[str], ef: int, layer: int, visited_log: Optional[List[Tuple[str, int]]] = None) -> List[Tuple[float, str]]:
         """
         Greedy search at a specific layer.
         Maintains a dynamically updated list (size ef) of nearest elements.
@@ -81,6 +81,8 @@ class HNSW:
             dist = euclidean_distance(query, self.nodes[ep].values)
             heapq.heappush(candidates, (dist, ep))
             heapq.heappush(best_nodes, (-dist, ep))
+            if visited_log is not None:
+                visited_log.append((ep, layer))
             
         while candidates:
             c_dist, c_id = heapq.heappop(candidates)
@@ -94,8 +96,10 @@ class HNSW:
             for neighbor in self.graphs[layer].get(c_id, []):
                 if neighbor not in visited:
                     visited.add(neighbor)
+                    if visited_log is not None:
+                        visited_log.append((neighbor, layer))
+                        
                     furthest_best_dist = -best_nodes[0][0]
-                    
                     neighbor_dist = euclidean_distance(query, self.nodes[neighbor].values)
                     
                     if neighbor_dist < furthest_best_dist or len(best_nodes) < ef:
@@ -180,34 +184,26 @@ class HNSW:
                 if vector.id not in self.graphs[lc]:
                     self.graphs[lc][vector.id] = []
 
-    def search(self, query_values: npt.NDArray[np.float64], k: int = 5) -> List[Vector]:
+    def search_with_path(self, query_values: npt.NDArray[np.float64], k: int = 5) -> Tuple[List[Vector], List[Tuple[str, int]]]:
         """
-        Approximate Nearest Neighbor (ANN) search.
-        
-        Time Complexity: O(log N * D * M) 
-        
-        Args:
-            query_values: The raw numpy vector to search.
-            k: The number of nearest neighbors to retrieve.
-            
-        Returns:
-            List[Vector]: The top k closest vectors.
+        Executes HNSW search while securely documenting the structural graph traversal sequence natively.
+        Returns: Tuple[Results Array, Traversal Node Trace]
         """
         if self.entry_point is None:
-            return []
+            return [], []
             
         current_ep = self.entry_point
         current_layer = self.max_layer
         
-        # Traverse from top to layer 1 using ef=1 to quickly find the locality
+        visited_trace: List[Tuple[str, int]] = [(current_ep, current_layer)]
+        
         while current_layer > 0:
-            nearest = self._search_layer(query_values, [current_ep], 1, current_layer)
+            nearest = self._search_layer(query_values, [current_ep], 1, current_layer, visited_log=visited_trace)
             if nearest:
                 current_ep = nearest[0][1]
             current_layer -= 1
             
-        # At layer 0, use a larger ef for accurate local search
-        best_nodes = self._search_layer(query_values, [current_ep], max(self.ef_construction, k), 0)
+        best_nodes = self._search_layer(query_values, [current_ep], max(self.ef_construction, k), 0, visited_log=visited_trace)
         
         top_k_ids = [n_id for _, n_id in best_nodes[:k]]
-        return [self.nodes[n_id] for n_id in top_k_ids]
+        return [self.nodes[n_id] for n_id in top_k_ids], visited_trace

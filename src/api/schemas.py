@@ -24,3 +24,19 @@ class VectorResponse(BaseModel):
 class QueryResponse(BaseModel):
     """Payload returned from a successful neighbor search."""
     results: List[VectorResponse]
+
+class NodePosition(BaseModel):
+    """3D WebGL render projection node structure."""
+    id: str
+    layer: int
+    pos: List[float]
+    neighbors: List[str]
+
+class GraphStateResponse(BaseModel):
+    """Entire structural payload of the vector topography."""
+    nodes: List[NodePosition]
+
+class QueryVisualizationResponse(BaseModel):
+    """Search payload containing algorithmic route pathing."""
+    results: List[VectorResponse]
+    path: List[Any] # Tuple mapping [Node_ID, Layer]
