@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>AETHER_OS v3.0 - ENGINEERING_CONSOLE</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&amp;family=Inter:wght@400;600&amp;family=JetBrains+Mono:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-primary": "#4d2600",
+                        "outline": "#a38c7c",
+                        "on-surface": "#f2dfd3",
+                        "primary-fixed": "#ffdcc3",
+                        "inverse-primary": "#904d00",
+                        "secondary-container": "#3c475a",
+                        "tertiary": "#96ccff",
+                        "surface": "#1a120b",
+                        "tertiary-fixed": "#cee5ff",
+                        "on-secondary-fixed-variant": "#3c475a",
+                        "on-primary-fixed": "#2f1500",
+                        "error-container": "#93000a",
+                        "on-tertiary-fixed": "#001d32",
+                        "primary-fixed-dim": "#ffb77d",
+                        "surface-container-low": "#231a13",
+                        "surface-variant": "#3e332b",
+                        "tertiary-fixed-dim": "#96ccff",
+                        "outline-variant": "#554336",
+                        "secondary-fixed-dim": "#bcc7dd",
+                        "on-primary-container": "#432100",
+                        "secondary": "#bcc7dd",
+                        "surface-container-highest": "#3e332b",
+                        "primary": "#ffb77d",
+                        "tertiary-container": "#0297e8",
+                        "on-tertiary-fixed-variant": "#004a75",
+                        "on-surface-variant": "#dbc2b0",
+                        "primary-container": "#d97707",
+                        "error": "#ffb4ab",
+                        "on-secondary-fixed": "#111c2c",
+                        "on-error-container": "#ffdad6",
+                        "on-error": "#690005",
+                        "inverse-on-surface": "#392e26",
+                        "surface-tint": "#ffb77d",
+                        "background": "#1a120b",
+                        "surface-dim": "#1a120b",
+                        "surface-bright": "#42372f",
+                        "on-tertiary": "#003353",
+                        "surface-container": "#271e16",
+                        "inverse-surface": "#f2dfd3",
+                        "on-primary-fixed-variant": "#6e3900",
+                        "on-background": "#f2dfd3",
+                        "surface-container-lowest": "#150c06",
+                        "on-secondary-container": "#aab6cc",
+                        "on-tertiary-container": "#002c48",
+                        "secondary-fixed": "#d8e3fa",
+                        "surface-container-high": "#322820",
+                        "on-secondary": "#263142",
+                        "blueprint-border": "#4A5568",
+                        "blueprint-bg": "#0F1115",
+                        "blueprint-accent": "#D97706"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px",
+                        "none": "0px"
+                    },
+                    "spacing": {
+                        "margin-lg": "24px",
+                        "container-padding": "32px",
+                        "margin-md": "16px",
+                        "unit": "4px",
+                        "gutter": "1px",
+                        "margin-sm": "8px"
+                    },
+                    "fontFamily": {
+                        "label": ["Inter"],
+                        "h2": ["IBM Plex Sans"],
+                        "h1": ["IBM Plex Sans"],
+                        "h3": ["IBM Plex Sans"],
+                        "data-lg": ["JetBrains Mono"],
+                        "body": ["Inter"],
+                        "data-sm": ["JetBrains Mono"]
+                    },
+                    "fontSize": {
+                        "label": ["11px", { "lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "h2": ["32px", { "lineHeight": "1.2", "letterSpacing": "-0.01em", "fontWeight": "700" }],
+                        "h1": ["48px", { "lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "h3": ["20px", { "lineHeight": "1.2", "letterSpacing": "0", "fontWeight": "600" }],
+                        "data-lg": ["18px", { "lineHeight": "1", "letterSpacing": "-0.02em", "fontWeight": "500" }],
+                        "body": ["14px", { "lineHeight": "1.5", "letterSpacing": "0", "fontWeight": "400" }],
+                        "data-sm": ["12px", { "lineHeight": "1", "letterSpacing": "0", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body {
+            background-color: #0F1115;
+            color: #f2dfd3;
+        }
+        .blueprint-grid {
+            background-size: 20px 20px;
+            background-image: 
+                linear-gradient(to right, rgba(74, 85, 104, 0.1) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(74, 85, 104, 0.1) 1px, transparent 1px);
+        }
+    </style>
+</head>
+<body class="flex flex-col min-h-screen font-body overflow-hidden">
+<!-- TopNavBar -->
+<nav class="bg-[#0F1115] dark:bg-slate-950 flex justify-between items-center w-full px-4 h-12 fixed full-width top-0 border-b border-[#4A5568] rounded-none z-50">
+<div class="flex items-center gap-4">
+<span class="text-lg font-bold tracking-widest text-slate-100 dark:text-white font-['JetBrains_Mono']">AETHER_OS v3.0</span>
+</div>
+<div class="flex items-center gap-margin-md">
+<div class="flex border border-[#4A5568] h-8 items-center px-2">
+<span class="material-symbols-outlined text-[#4A5568] text-sm mr-2" data-icon="search">search</span>
+<input class="bg-transparent border-none text-on-surface font-data-sm text-data-sm focus:ring-0 p-0 w-48 placeholder:text-[#4A5568]" placeholder="QUERY_VECTOR..." type="text"/>
+</div>
+<div class="flex items-center gap-margin-sm text-[#D97706]">
+<button class="hover:bg-[#D97706] hover:text-[#0F1115] transition-colors duration-75 p-1 flex items-center justify-center opacity-90 border border-transparent">
+<span class="material-symbols-outlined" data-icon="sensors">sensors</span>
+</button>
+<button class="hover:bg-[#D97706] hover:text-[#0F1115] transition-colors duration-75 p-1 flex items-center justify-center border border-transparent">
+<span class="material-symbols-outlined" data-icon="memory">memory</span>
+</button>
+<button class="hover:bg-[#D97706] hover:text-[#0F1115] transition-colors duration-75 p-1 flex items-center justify-center border border-transparent">
+<span class="material-symbols-outlined" data-icon="settings_input_component">settings_input_component</span>
+</button>
+</div>
+</div>
+</nav>
+<div class="flex flex-1 pt-12">
+<!-- SideNavBar -->
+<aside class="bg-[#0F1115] dark:bg-slate-950 flex flex-col h-screen fixed left-0 top-12 z-40 w-64 border-r border-[#4A5568] rounded-none">
+<div class="p-4 border-b border-[#4A5568]">
+<h2 class="font-h3 text-h3 text-on-surface">ENGINEERING_CONSOLE</h2>
+<p class="font-label text-label text-[#4A5568] mt-unit">VECTOR_DB_CORE</p>
+</div>
+<nav class="flex-1 flex flex-col pt-margin-md font-['JetBrains_Mono'] text-xs uppercase">
+<a class="bg-[#D97706] text-[#0F1115] font-bold p-3 w-full flex items-center gap-2 border-b border-[#D97706] opacity-90 transition-opacity" href="#">
+<span class="material-symbols-outlined text-sm" data-icon="radar">radar</span>
+                    Nearest Neighbor
+                </a>
+<a class="text-slate-400 border-b border-[#4A5568] p-3 w-full flex items-center gap-2 hover:bg-slate-800/50 cursor-crosshair hover:bg-[#D97706] hover:text-[#0F1115] transition-colors duration-75 border-transparent" href="#">
+<span class="material-symbols-outlined text-sm" data-icon="query_stats">query_stats</span>
+                    Big O Metrics
+                </a>
+<a class="text-slate-400 border-b border-[#4A5568] p-3 w-full flex items-center gap-2 hover:bg-slate-800/50 cursor-crosshair hover:bg-[#D97706] hover:text-[#0F1115] transition-colors duration-75 border-transparent" href="#">
+<span class="material-symbols-outlined text-sm" data-icon="layers">layers</span>
+                    HNSW Controls
+                </a>
+</nav>
+<div class="p-4 border-t border-[#4A5568]">
+<button class="w-full border border-[#D97706] text-[#D97706] hover:bg-[#D97706] hover:text-[#0F1115] font-data-sm text-data-sm py-2 uppercase transition-colors duration-75 cursor-crosshair">
+                    DEPLOY_INDEX
+                </button>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 ml-64 flex blueprint-grid h-[calc(100vh-3rem)]">
+<!-- Visualization Canvas -->
+<div class="flex-1 relative flex items-center justify-center overflow-hidden border-r border-[#4A5568]">
+<!-- Technical Overlays -->
+<div class="absolute top-4 left-4 font-data-sm text-data-sm text-[#4A5568]">
+                    COORD [X: -45.22, Y: 12.08, Z: 88.91]
+                </div>
+<div class="absolute bottom-4 right-4 font-data-sm text-data-sm text-[#4A5568]">
+                    DIM: 1536 / METRIC: COSINE
+                </div>
+<div class="absolute top-4 right-4 flex items-center gap-2 border border-[#4A5568] p-1 bg-[#0F1115]">
+<span class="w-2 h-2 bg-[#D97706] block"></span>
+<span class="font-data-sm text-data-sm text-on-surface">LIVE_FEED</span>
+</div>
+<!-- Abstract Vector Visualization Canvas (Simulated) -->
+<div class="w-[600px] h-[600px] border border-[#4A5568] relative rounded-full opacity-50 border-dashed animate-pulse" style="animation-duration: 4s;">
+<!-- Simulated point cloud cluster -->
+<div class="absolute top-1/4 left-1/4 w-1 h-1 bg-slate-300 rounded-full shadow-[0_0_10px_rgba(255,255,255,0.8)]"></div>
+<div class="absolute top-1/3 left-1/2 w-1.5 h-1.5 bg-[#D97706] rounded-full"></div>
+<div class="absolute bottom-1/4 right-1/3 w-1 h-1 bg-slate-400 rounded-full"></div>
+<div class="absolute top-1/2 left-1/3 w-1 h-1 bg-slate-500 rounded-full"></div>
+<!-- Connecting lines (svg) -->
+<svg class="absolute inset-0 w-full h-full pointer-events-none" viewbox="0 0 600 600">
+<line stroke="#4A5568" stroke-dasharray="2 2" stroke-width="0.5" x1="150" x2="300" y1="150" y2="200"></line>
+<line stroke="#4A5568" stroke-dasharray="2 2" stroke-width="0.5" x1="300" x2="400" y1="200" y2="450"></line>
+</svg>
+</div>
+</div>
+<!-- Right Sidebar Panels -->
+<div class="w-80 flex flex-col bg-[#0F1115] border-l border-[#4A5568] h-full overflow-y-auto">
+<!-- Panel 1: NEAREST_NEIGHBOR -->
+<div class="border-b border-[#4A5568]">
+<div class="bg-slate-900/50 p-2 border-b border-[#4A5568] flex items-center justify-between">
+<span class="font-data-sm text-data-sm text-[#D97706] uppercase">NEAREST_NEIGHBOR</span>
+<span class="material-symbols-outlined text-sm text-[#4A5568]" data-icon="filter_list">filter_list</span>
+</div>
+<div class="p-2 space-y-gutter">
+<!-- Ledger Row Header -->
+<div class="flex justify-between font-label text-label text-[#4A5568] border-b border-[#4A5568] pb-1 mb-2">
+<span>VECTOR_ID</span>
+<span>DIST</span>
+</div>
+<!-- Rows -->
+<div class="flex justify-between font-data-sm text-data-sm text-on-surface hover:bg-slate-800 p-1 cursor-crosshair">
+<span>V-8839-A</span>
+<span class="text-right">0.012</span>
+</div>
+<div class="flex justify-between font-data-sm text-data-sm text-on-surface bg-slate-800 border border-[#D97706] p-1 cursor-crosshair">
+<span class="text-[#D97706]">V-9921-X</span>
+<span class="text-right text-[#D97706]">0.045</span>
+</div>
+<div class="flex justify-between font-data-sm text-data-sm text-on-surface hover:bg-slate-800 p-1 cursor-crosshair">
+<span>V-1102-B</span>
+<span class="text-right">0.108</span>
+</div>
+</div>
+</div>
+<!-- Panel 2: BIG_O_METRICS -->
+<div class="border-b border-[#4A5568]">
+<div class="bg-slate-900/50 p-2 border-b border-[#4A5568]">
+<span class="font-data-sm text-data-sm text-[#D97706] uppercase">BIG_O_METRICS</span>
+</div>
+<div class="p-4 flex flex-col gap-margin-sm">
+<div class="flex justify-between items-center border border-[#4A5568] p-2">
+<span class="font-label text-label text-[#4A5568]">SEARCH_COMPLEXITY</span>
+<span class="font-data-lg text-data-lg text-on-surface">O(log N)</span>
+</div>
+<div class="flex justify-between items-center border border-[#4A5568] p-2">
+<span class="font-label text-label text-[#4A5568]">QUERY_TIME</span>
+<span class="font-data-lg text-data-lg text-[#D97706]">12ms</span>
+</div>
+</div>
+</div>
+<!-- Panel 3: HNSW_CONTROLS -->
+<div class="flex-1 border-b border-[#4A5568]">
+<div class="bg-slate-900/50 p-2 border-b border-[#4A5568]">
+<span class="font-data-sm text-data-sm text-[#D97706] uppercase">HNSW_CONTROLS</span>
+</div>
+<div class="p-4 space-y-4">
+<label class="flex items-center gap-3 cursor-crosshair">
+<div class="w-4 h-4 border border-[#4A5568] bg-[#0F1115] flex items-center justify-center">
+<div class="w-2 h-2 bg-[#D97706]"></div>
+</div>
+<span class="font-data-sm text-data-sm text-on-surface uppercase">Layer 0 (Base Graph)</span>
+</label>
+<label class="flex items-center gap-3 cursor-crosshair">
+<div class="w-4 h-4 border border-[#4A5568] bg-[#0F1115] flex items-center justify-center">
+<!-- Unchecked -->
+</div>
+<span class="font-data-sm text-data-sm text-[#4A5568] uppercase">Layer 1 (Skiplist)</span>
+</label>
+<label class="flex items-center gap-3 cursor-crosshair">
+<div class="w-4 h-4 border border-[#D97706] bg-[#0F1115] flex items-center justify-center">
+<span class="text-[#D97706] font-bold text-[10px] leading-none">X</span>
+</div>
+<span class="font-data-sm text-data-sm text-on-surface uppercase">Show Entry Nodes</span>
+</label>
+</div>
+</div>
+</div>
+</main>
+</div>
+</body></html>
