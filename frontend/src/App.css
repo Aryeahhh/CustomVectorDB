@@ -61,7 +61,194 @@ html, body, #root {
   position: relative;
   width: 100%;
   height: 100%;
-  /* Creates the strict Swiss grid lines around the viewport */
-  border-left: 1px solid var(--border-color);
+}
+
+.main-content {
+  display: flex;
+  flex-grow: 1;
+  height: calc(100vh - 61px);
+  overflow: hidden;
+}
+
+/* Sidebar Analytics Panel */
+.sidebar {
+  width: 320px;
+  background-color: var(--panel-bg);
   border-right: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+  padding: 24px;
+  overflow-y: auto;
+}
+
+.sidebar-section {
+  margin-bottom: 24px;
+}
+
+.sidebar-section h2 {
+  font-family: 'IBM Plex Sans', sans-serif;
+  font-size: 16px;
+  margin: 0 0 16px 0;
+  color: var(--accent-color);
+}
+
+.sidebar-section p {
+  font-size: 13px;
+  line-height: 1.6;
+  color: #BDB2A8;
+  margin: 0 0 12px 0;
+}
+
+.telemetry {
+  border-top: 1px solid var(--border-color);
+  padding-top: 24px;
+}
+
+.telemetry h3 {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  margin: 0 0 16px 0;
+}
+
+.metrics {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.metric-row {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.metric-row .label {
+  color: var(--accent-color);
+  font-weight: bold;
+}
+
+.highlight-tag {
+  background-color: #382B21;
+  padding: 2px 6px;
+  border: 1px solid var(--accent-color);
+  display: inline-block;
+  width: fit-content;
+}
+
+}
+
+/* Loading Screen */
+.loading-screen {
+  width: 100vw;
+  height: 100vh;
+  background-color: var(--bg-color);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--text-primary);
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 9999;
+}
+
+.loading-content {
+  width: 500px;
+  background: var(--panel-bg);
+  border: 1px solid var(--border-color);
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.loading-content h2 {
+  color: var(--accent-color);
+  margin: 0;
+  font-size: 20px;
+  letter-spacing: 0.1em;
+}
+
+.loading-content p {
+  color: #948A80;
+  font-size: 14px;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.progress-bar-container {
+  width: 100%;
+  height: 8px;
+  background-color: #382B21;
+  border: 1px solid var(--border-color);
+  position: relative;
+  overflow: hidden;
+}
+
+.progress-bar {
+  height: 100%;
+  background-color: #00f2ff;
+  transition: width 0.3s ease-out;
+  box-shadow: 0 0 10px #00f2ff;
+}
+
+.loading-status {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  color: #BDB2A8;
+}
+
+.loading-status .percentage {
+  color: #00f2ff;
+  font-weight: bold;
+}
+
+.cold-boot-warning {
+  margin-top: 10px;
+  padding: 16px;
+  background-color: rgba(217, 119, 6, 0.1);
+  border-left: 3px solid var(--accent-color);
+  font-size: 12px;
+  line-height: 1.6;
+  color: #D97706;
+}
+
+/* Execution Button */
+.sidebar-section.execution {
+  margin-top: auto;
+}
+
+.execute-btn {
+  width: 100%;
+  background-color: transparent;
+  color: #00f2ff;
+  border: 1px solid #00f2ff;
+  padding: 12px;
+  font-family: inherit;
+  font-weight: bold;
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 0 5px rgba(0, 242, 255, 0.2);
+}
+
+.execute-btn:hover {
+  background-color: rgba(0, 242, 255, 0.1);
+  box-shadow: 0 0 15px rgba(0, 242, 255, 0.4);
+}
+
+.execute-btn:active {
+  background-color: rgba(0, 242, 255, 0.3);
+}
+
+.execute-btn.running {
+  background-color: #00f2ff;
+  color: #000;
+  box-shadow: 0 0 20px rgba(0, 242, 255, 0.6);
+  cursor: not-allowed;
 }
