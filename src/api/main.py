@@ -36,7 +36,7 @@ def _seed_store(s: VectorStore, count: int = SEED_COUNT) -> None:
         s.add_vector(
             id=f"doc_{i}",
             values=np.random.rand(VECTOR_DIMENSION).tolist(),
-            metadata={"source": "AETHER_OS_DEPLOY", "cluster": i % 5}
+            metadata={"source": "vectorcore_seed", "cluster": i % 5}
         )
 
 
@@ -56,7 +56,7 @@ async def lifespan(_app: FastAPI):
 
 
 app = FastAPI(
-    title="AetherOS Vector DB",
+    title="VectorCore",
     description="From-scratch HNSW vector database.",
     version="1.0.0",
     lifespan=lifespan,

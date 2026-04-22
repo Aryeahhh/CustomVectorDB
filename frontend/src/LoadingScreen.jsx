@@ -37,7 +37,7 @@ export default function LoadingScreen() {
             <main className="w-full max-w-4xl px-container-padding relative z-10 flex flex-col gap-margin-md">
                 <div className="flex justify-between items-end border-b border-surface-variant pb-margin-sm mb-margin-lg">
                     <div className="font-data-sm text-data-sm text-outline uppercase tracking-widest">
-                        Vector_OS_V1.0
+                        VECTORCORE_V3.0
                     </div>
                     <div className="font-data-sm text-data-sm text-outline tracking-widest">
                         SEQ: INIT_0xFF

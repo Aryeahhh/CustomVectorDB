@@ -1,4 +1,4 @@
-# AetherOS Vector DB
+# VectorCore
 
 A from-scratch vector database built on a custom HNSW implementation, with a WebGL frontend for real-time graph visualization.
 

@@ -67,7 +67,7 @@ function App() {
 
       <nav className="bg-blueprint-bg flex justify-between items-center w-full px-4 h-12 fixed top-0 border-b border-blueprint-border z-50">
         <div className="flex items-center gap-4">
-          <span className="text-lg font-bold tracking-widest text-[#f2dfd3] uppercase font-data-lg">AETHER_OS v3.0</span>
+          <span className="text-lg font-bold tracking-widest text-[#f2dfd3] uppercase font-data-lg">VECTORCORE v3.0</span>
           <span className="font-data-sm text-[10px] text-blueprint-border tracking-widest hidden md:block">{nodeCount} NODES / {layerCount} LAYERS</span>
         </div>
 
