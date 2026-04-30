@@ -65,7 +65,7 @@ app = FastAPI(
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173", "https://custom-vector-db.vercel.app", "https://custom-vector-db.vercel.app/"],
+    allow_origins=["http://localhost:5173", "https://custom-vector-db.vercel.app"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
