@@ -10,10 +10,15 @@ function StatRow({ label, value, accent }) {
     );
 }
 
-export default function Sidebar({ activePanel }) {
+export default function Sidebar({ activePanel, isOpen, onClose }) {
     const activeNodeId = useVectorStore((state) => state.activeNodeId);
     const graphData = useVectorStore((state) => state.graphData);
     const isSearching = useVectorStore((state) => state.isSearching);
+    const deleteVector = useVectorStore((state) => state.deleteVector);
+    const runBenchmark = useVectorStore((state) => state.runBenchmark);
+    const benchmarkResults = useVectorStore((state) => state.benchmarkResults);
+    const isBenchmarking = useVectorStore((state) => state.isBenchmarking);
+    const searchQuery = useVectorStore((state) => state.searchQuery);
     const executeSearch = useVectorStore((state) => state.executeSearch);
     const searchResults = useVectorStore((state) => state.searchResults);
     const searchPath = useVectorStore((state) => state.searchPath);
@@ -29,12 +34,15 @@ export default function Sidebar({ activePanel }) {
     const layerLabels = ['Base Graph', 'Skiplist', 'Express', 'Highway', 'Apex', 'Summit'];
 
     return (
-        <div className="w-80 flex flex-col bg-[#0F1115] border-l border-blueprint-border h-full overflow-y-auto">
+        <div className={`w-80 flex flex-col bg-[#0F1115] border-l border-blueprint-border h-full overflow-y-auto absolute right-0 top-0 z-40 transform transition-transform duration-200 ease-in-out ${isOpen ? 'translate-x-0' : 'translate-x-full'} md:relative md:translate-x-0`}>
 
             {activePanel === 'nearest' && (
                 <div className="flex-1 flex flex-col">
                     <div className="bg-slate-900/50 p-2 border-b border-blueprint-border flex items-center justify-between">
                         <span className="font-data-sm text-data-sm text-blueprint-accent uppercase tracking-widest">LIVE_TELEMETRY</span>
+                        <button className="md:hidden text-blueprint-border hover:text-blueprint-accent flex items-center" onClick={onClose}>
+                            <span className="material-symbols-outlined text-[18px]">close</span>
+                        </button>
                     </div>
                     <div className="p-3 min-h-[140px]">
                         {activeNode ? (
@@ -53,6 +61,14 @@ export default function Sidebar({ activePanel }) {
                                 <div className="flex justify-between font-data-sm text-data-sm text-on-surface">
                                     <span>CONNECTIONS</span>
                                     <span>{activeNode.neighbors.length}</span>
+                                </div>
+                                <div className="pt-2 border-t border-blueprint-border mt-2">
+                                    <button 
+                                        onClick={() => deleteVector(activeNode.id)}
+                                        className="w-full border border-red-500/50 text-red-400 hover:bg-red-500 hover:text-white p-2 font-data-sm text-xs uppercase tracking-widest transition-colors"
+                                    >
+                                        DELETE NODE
+                                    </button>
                                 </div>
                             </div>
                         ) : (
@@ -94,10 +110,17 @@ export default function Sidebar({ activePanel }) {
                     <div className="p-4 mt-auto border-t border-blueprint-border">
                         <button
                             className={`w-full border border-blueprint-accent p-3 font-data-sm text-sm uppercase tracking-widest transition-all ${isSearching ? 'bg-blueprint-accent text-blueprint-bg animate-pulse' : 'text-blueprint-accent hover:bg-blueprint-accent/10'}`}
-                            onClick={() => executeSearch()}
+                            onClick={() => {
+                                const floats = searchQuery.split(',').map(s => parseFloat(s.trim())).filter(f => !isNaN(f));
+                                if (floats.length === 3) {
+                                    executeSearch(floats);
+                                } else {
+                                    executeSearch();
+                                }
+                            }}
                             disabled={isSearching}
                         >
-                            {isSearching ? 'TRACING_PATH...' : 'EXECUTE_HNSW_SEARCH'}
+                            {isSearching ? 'TRACING_PATH...' : (searchQuery.trim() ? 'EXECUTE_HNSW_SEARCH' : 'EXECUTE_RANDOM_SEARCH')}
                         </button>
                     </div>
                 </div>
@@ -105,8 +128,11 @@ export default function Sidebar({ activePanel }) {
 
             {activePanel === 'metrics' && (
                 <div className="flex-1 flex flex-col">
-                    <div className="bg-slate-900/50 p-2 border-b border-blueprint-border">
+                    <div className="bg-slate-900/50 p-2 border-b border-blueprint-border flex items-center justify-between">
                         <span className="font-data-sm text-data-sm text-blueprint-accent uppercase tracking-widest">ALGORITHMIC_METRICS</span>
+                        <button className="md:hidden text-blueprint-border hover:text-blueprint-accent flex items-center" onClick={onClose}>
+                            <span className="material-symbols-outlined text-[18px]">close</span>
+                        </button>
                     </div>
                     <div className="p-4 flex flex-col gap-3">
                         <StatRow label="SEARCH" value="O(log N)" />
@@ -125,8 +151,11 @@ export default function Sidebar({ activePanel }) {
 
             {activePanel === 'hnsw' && (
                 <div className="flex-1 flex flex-col">
-                    <div className="bg-slate-900/50 p-2 border-b border-blueprint-border">
+                    <div className="bg-slate-900/50 p-2 border-b border-blueprint-border flex items-center justify-between">
                         <span className="font-data-sm text-data-sm text-blueprint-accent uppercase tracking-widest">LAYER_CONTROLS</span>
+                        <button className="md:hidden text-blueprint-border hover:text-blueprint-accent flex items-center" onClick={onClose}>
+                            <span className="material-symbols-outlined text-[18px]">close</span>
+                        </button>
                     </div>
                     <div className="p-4 space-y-4">
                         {Array.from({ length: maxLayer + 1 }, (_, l) => {
@@ -156,8 +185,11 @@ export default function Sidebar({ activePanel }) {
 
             {activePanel === 'sensors' && (
                 <div className="flex-1 flex flex-col">
-                    <div className="bg-slate-900/50 p-2 border-b border-blueprint-border">
+                    <div className="bg-slate-900/50 p-2 border-b border-blueprint-border flex items-center justify-between">
                         <span className="font-data-sm text-data-sm text-blueprint-accent uppercase tracking-widest">SENSOR_READOUT</span>
+                        <button className="md:hidden text-blueprint-border hover:text-blueprint-accent flex items-center" onClick={onClose}>
+                            <span className="material-symbols-outlined text-[18px]">close</span>
+                        </button>
                     </div>
                     <div className="p-4 flex flex-col gap-3">
                         {systemSensors ? (
@@ -179,8 +211,11 @@ export default function Sidebar({ activePanel }) {
 
             {activePanel === 'memory' && (
                 <div className="flex-1 flex flex-col">
-                    <div className="bg-slate-900/50 p-2 border-b border-blueprint-border">
+                    <div className="bg-slate-900/50 p-2 border-b border-blueprint-border flex items-center justify-between">
                         <span className="font-data-sm text-data-sm text-blueprint-accent uppercase tracking-widest">MEMORY_MAP</span>
+                        <button className="md:hidden text-blueprint-border hover:text-blueprint-accent flex items-center" onClick={onClose}>
+                            <span className="material-symbols-outlined text-[18px]">close</span>
+                        </button>
                     </div>
                     <div className="p-4 flex flex-col gap-3">
                         {systemMemory ? (
@@ -199,6 +234,45 @@ export default function Sidebar({ activePanel }) {
                         ) : (
                             <p className="font-data-sm text-data-sm text-blueprint-border uppercase tracking-widest text-center py-8">FETCHING...</p>
                         )}
+                    </div>
+                </div>
+            )}
+
+            {activePanel === 'benchmarking' && (
+                <div className="flex-1 flex flex-col">
+                    <div className="bg-slate-900/50 p-2 border-b border-blueprint-border flex items-center justify-between">
+                        <span className="font-data-sm text-data-sm text-blueprint-accent uppercase tracking-widest">BENCHMARKING</span>
+                        <button className="md:hidden text-blueprint-border hover:text-blueprint-accent flex items-center" onClick={onClose}>
+                            <span className="material-symbols-outlined text-[18px]">close</span>
+                        </button>
+                    </div>
+                    <div className="p-4 flex flex-col gap-3">
+                        {benchmarkResults ? (
+                            <>
+                                <StatRow label="HNSW QPS" value={benchmarkResults.hnsw_qps} accent />
+                                <StatRow label="BRUTE FORCE QPS" value={benchmarkResults.brute_force_qps} />
+                                <StatRow label="RECALL@10" value={`${benchmarkResults.recall_at_10}%`} accent />
+                                <div className="mt-4 border-t border-blueprint-border pt-4">
+                                    <p className="font-label text-[10px] text-blueprint-border uppercase tracking-widest mb-2">SPEEDUP MULTIPLIER</p>
+                                    <p className="font-data-lg text-2xl text-blueprint-accent">
+                                        {(benchmarkResults.hnsw_qps / Math.max(benchmarkResults.brute_force_qps, 1)).toFixed(1)}x
+                                    </p>
+                                </div>
+                            </>
+                        ) : (
+                            <p className="font-data-sm text-[10px] text-blueprint-border leading-relaxed uppercase tracking-widest text-center py-8">
+                                RUN BENCHMARK TO COMPARE HNSW VS BRUTE FORCE
+                            </p>
+                        )}
+                    </div>
+                    <div className="p-4 mt-auto border-t border-blueprint-border">
+                        <button
+                            className={`w-full border border-blueprint-accent p-3 font-data-sm text-sm uppercase tracking-widest transition-all ${isBenchmarking ? 'bg-blueprint-accent text-blueprint-bg animate-pulse' : 'text-blueprint-accent hover:bg-blueprint-accent/10'}`}
+                            onClick={() => runBenchmark()}
+                            disabled={isBenchmarking}
+                        >
+                            {isBenchmarking ? 'RUNNING...' : 'RUN BENCHMARK'}
+                        </button>
                     </div>
                 </div>
             )}

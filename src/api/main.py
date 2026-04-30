@@ -14,14 +14,15 @@ from src.api.schemas import (
     VectorIngestRequest, VectorSearchRequest, QueryResponse, VectorResponse,
     GraphStateResponse, NodePosition, QueryVisualizationResponse,
     SystemMemoryResponse, SystemSensorsResponse, SystemDeployResponse,
-    SystemPersistResponse
+    SystemPersistResponse, SystemBenchmarkResponse
 )
 from src.engine.store import VectorStore
 from src.core.viz_utils import pca_project_3d
 
 VECTOR_DIMENSION = 3
-STORE_PATH = os.environ.get("STORE_PATH", "./data/vector_store.pkl")
+STORE_PATH = os.environ.get("STORE_PATH", "./data/vector_store.json")
 SEED_COUNT = 500
+MAX_NODES = 10000
 
 store: VectorStore = None
 START_TIME: float = 0.0
@@ -64,7 +65,7 @@ app = FastAPI(
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=["http://localhost:5173", "https://custom-vector-db.vercel.app", "https://custom-vector-db.vercel.app/"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -78,6 +79,9 @@ def root():
 
 @app.post("/vectors", status_code=status.HTTP_201_CREATED)
 def ingest_vector(payload: VectorIngestRequest):
+    if len(store.hnsw.nodes) >= MAX_NODES:
+        raise HTTPException(status_code=400, detail="Database capacity reached. Cannot ingest more vectors.")
+        
     try:
         store.add_vector(
             id=payload.id,
@@ -86,7 +90,8 @@ def ingest_vector(payload: VectorIngestRequest):
         )
         return {"status": "success", "message": f"Successfully ingested vector {payload.id}"}
     except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        print(f"Ingest Error: {str(e)}")
+        raise HTTPException(status_code=400, detail="Invalid vector data provided.")
 
 
 @app.post("/search", response_model=QueryResponse)
@@ -96,7 +101,8 @@ def search_vectors(payload: VectorSearchRequest):
         response_data = [VectorResponse(id=vec.id, metadata=vec.metadata) for vec in results]
         return QueryResponse(results=response_data)
     except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        print(f"Search Error: {str(e)}")
+        raise HTTPException(status_code=400, detail="Invalid search query parameters.")
 
 
 
@@ -114,7 +120,8 @@ def search_visualization(payload: VectorSearchRequest):
             results=response_data, path=trace, latency_ms=round(latency_ms, 2)
         )
     except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        print(f"Search Viz Error: {str(e)}")
+        raise HTTPException(status_code=400, detail="Invalid search query parameters.")
 
 
 @app.get("/graph", response_model=GraphStateResponse)
@@ -199,4 +206,44 @@ def persist_index():
         status="SUCCESS",
         message=f"VectorStore saved to {STORE_PATH}.",
         total_nodes=len(store.hnsw.nodes)
+    )
+
+@app.post("/system/benchmark", response_model=SystemBenchmarkResponse)
+def run_benchmark():
+    num_queries = 100
+    k = 10
+    
+    queries = [np.random.rand(VECTOR_DIMENSION).tolist() for _ in range(num_queries)]
+    
+    t0 = time.time()
+    hnsw_results = []
+    for q in queries:
+        hnsw_results.append([vec.id for vec in store.query(query_vals=q, k=k)])
+    t1 = time.time()
+    hnsw_time = t1 - t0
+    hnsw_qps = num_queries / max(hnsw_time, 0.0001)
+    
+    t0 = time.time()
+    bf_results = []
+    for q in queries:
+        bf_results.append([vec.id for vec in store.brute_force_query(query_vals=q, k=k)])
+    t1 = time.time()
+    bf_time = t1 - t0
+    bf_qps = num_queries / max(bf_time, 0.0001)
+    
+    total_recall = 0
+    valid_queries = 0
+    for hnsw_res, bf_res in zip(hnsw_results, bf_results):
+        if not bf_res:
+            continue
+        valid_queries += 1
+        intersect = set(hnsw_res).intersection(set(bf_res))
+        total_recall += len(intersect) / len(bf_res)
+        
+    recall_at_10 = (total_recall / valid_queries) * 100 if valid_queries > 0 else 0.0
+    
+    return SystemBenchmarkResponse(
+        hnsw_qps=round(hnsw_qps, 2),
+        brute_force_qps=round(bf_qps, 2),
+        recall_at_10=round(recall_at_10, 2)
     )

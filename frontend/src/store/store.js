@@ -14,8 +14,18 @@ export const useVectorStore = create((set, get) => ({
 
     searchResults: [],
     searchLatency: 0,
+    searchQuery: "",
+    setSearchQuery: (query) => set({ searchQuery: query }),
 
     isSearching: false,
+
+    clearSearchState: () => set({
+        searchPath: [],
+        searchResults: [],
+        searchLatency: 0,
+        activeNodeId: null,
+        searchQuery: ""
+    }),
 
     activeLayerFilters: {},
     initLayerFilters: (maxLayer) => {
@@ -84,5 +94,72 @@ export const useVectorStore = create((set, get) => ({
             }
         } catch (err) { console.error("Sensors fetch failed:", err); }
         return null;
+    },
+
+    fetchGraph: async () => {
+        try {
+            const res = await fetch(`${API_URL}/graph`);
+            if (!res.ok) throw new Error("API Offline");
+            const data = await res.json();
+            if (!data.nodes || data.nodes.length === 0) throw new Error("Empty");
+            
+            const mapped = data.nodes.map((node) => ({
+                id: node.id,
+                layer: node.layer,
+                pos: [node.pos[0], node.layer * 3.5, node.pos[2]],
+                neighbors: node.neighbors
+            }));
+            const maxL = mapped.reduce((m, n) => Math.max(m, n.layer), 0);
+            get().initLayerFilters(maxL);
+            set({ graphData: mapped });
+        } catch (err) {
+            console.error("Fetch graph failed:", err);
+        }
+    },
+
+    insertVector: async () => {
+        try {
+            const id = `dynamic_${Math.random().toString(36).substr(2, 9)}`;
+            const values = [Math.random(), Math.random(), Math.random()];
+            const res = await fetch(`${API_URL}/vectors`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id, values, metadata: { source: "ui_insert" } })
+            });
+            if (res.ok) {
+                await get().fetchGraph();
+                get().fetchMemory();
+            }
+        } catch (err) { console.error("Insert failed:", err); }
+    },
+
+    deleteVector: async (id) => {
+        try {
+            const res = await fetch(`${API_URL}/vectors/${id}`, { method: 'DELETE' });
+            if (res.ok) {
+                set({ activeNodeId: null });
+                await get().fetchGraph();
+                get().fetchMemory();
+            }
+        } catch (err) { console.error("Delete failed:", err); }
+    },
+
+    benchmarkResults: null,
+    isBenchmarking: false,
+
+    runBenchmark: async () => {
+        set({ isBenchmarking: true, benchmarkResults: null });
+        try {
+            const res = await fetch(`${API_URL}/system/benchmark`, { method: 'POST' });
+            if (res.ok) {
+                const data = await res.json();
+                set({ benchmarkResults: data, isBenchmarking: false });
+            } else {
+                set({ isBenchmarking: false });
+            }
+        } catch (err) { 
+            console.error("Benchmark failed:", err); 
+            set({ isBenchmarking: false });
+        }
     }
 }));

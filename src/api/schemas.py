@@ -66,3 +66,8 @@ class SystemPersistResponse(BaseModel):
     status: str
     message: str
     total_nodes: int
+
+class SystemBenchmarkResponse(BaseModel):
+    hnsw_qps: float
+    brute_force_qps: float
+    recall_at_10: float
