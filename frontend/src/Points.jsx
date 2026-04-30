@@ -31,7 +31,7 @@ export default function PointsComponent({ nodes, hoveredIdx, setHoveredIdx }) {
             onPointerOver={handlePointerOver}
             onPointerOut={handlePointerOut}
         >
-            <bufferGeometry>
+            <bufferGeometry key={nodes.length}>
                 <bufferAttribute
                     attach="attributes-position"
                     count={positions.length / 3}
