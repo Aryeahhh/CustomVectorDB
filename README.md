@@ -9,6 +9,10 @@ A from-scratch vector database built on a custom HNSW implementation, with a Web
 - **Search** — Hierarchical Navigable Small World (HNSW) graph, O(log N) ANN search
 - **Projection** — Custom NumPy PCA to map N-dimensional vectors into the isometric 3D viewport
 
+## Live Demo
+- **Frontend (Vercel):** [https://custom-vector-db.vercel.app/](https://custom-vector-db.vercel.app/)
+- **Backend (Render):** [https://aetheros-backend.onrender.com](https://aetheros-backend.onrender.com)
+
 ## Running locally
 
 **Backend** (port 8000):
@@ -43,7 +47,7 @@ npm run dev
 
 ## Persistence
 
-The store is serialized to disk via pickle. The path is controlled by the `STORE_PATH` environment variable (default: `./data/vector_store.pkl`). On startup, the server loads from this file if it exists.
+The store is securely serialized to disk via JSON format. The path is controlled by the `STORE_PATH` environment variable (default: `./data/vector_store.json`). On startup, the server loads from this file if it exists.
 
 
 
