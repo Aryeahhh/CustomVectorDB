@@ -63,9 +63,16 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
+_raw_origins = os.environ.get(
+    "ALLOWED_ORIGINS",
+    "http://localhost:5173,http://localhost:3000,https://custom-vector-db.vercel.app"
+)
+ALLOWED_ORIGINS = [o.strip() for o in _raw_origins.split(",") if o.strip()]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173", "https://custom-vector-db.vercel.app"],
+    allow_origins=ALLOWED_ORIGINS,
+    allow_origin_regex=r"https://custom-vector-db.*\.vercel\.app",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
