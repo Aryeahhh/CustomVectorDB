@@ -27,6 +27,7 @@ export default function Sidebar({ activePanel, isOpen, onClose }) {
     const toggleLayerFilter = useVectorStore((state) => state.toggleLayerFilter);
     const systemMemory = useVectorStore((state) => state.systemMemory);
     const systemSensors = useVectorStore((state) => state.systemSensors);
+    const lockedNodeId = useVectorStore((state) => state.lockedNodeId);
 
     const activeNode = activeNodeId !== null ? graphData[activeNodeId] : null;
 
@@ -50,8 +51,8 @@ export default function Sidebar({ activePanel, isOpen, onClose }) {
                                 <div className="flex justify-between font-label text-label text-blueprint-border border-b border-blueprint-border pb-1">
                                     <span>METRIC</span><span>VALUE</span>
                                 </div>
-                                <div className="flex justify-between font-data-sm text-data-sm text-on-surface">
-                                    <span>NODE_ID</span>
+                                <div className="flex justify-between font-data-sm text-data-sm text-on-surface items-center">
+                                    <span className="flex items-center gap-1">NODE_ID {lockedNodeId === activeNodeId && <span className="material-symbols-outlined text-[12px] text-blueprint-accent" title="Node selected">lock</span>}</span>
                                     <span className="text-blueprint-accent">{activeNode.id}</span>
                                 </div>
                                 <div className="flex justify-between font-data-sm text-data-sm text-on-surface">

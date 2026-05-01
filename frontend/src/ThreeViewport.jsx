@@ -2,12 +2,22 @@ import React from 'react';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls, OrthographicCamera } from '@react-three/drei';
 import HNSWMaster from './HNSWMaster';
+import { useVectorStore } from './store/store';
 
 export default function ThreeViewport() {
+    const setLockedNodeId = useVectorStore((state) => state.setLockedNodeId);
+    const setActiveNodeId = useVectorStore((state) => state.setActiveNodeId);
+
+    const handlePointerMissed = () => {
+        setLockedNodeId(null);
+        setActiveNodeId(null);
+    };
+
     return (
         <Canvas
             shadows
             raycaster={{ params: { Points: { threshold: 0.3 } } }}
+            onPointerMissed={handlePointerMissed}
         >
             <color attach="background" args={['#0F1115']} />
 

@@ -1,6 +1,9 @@
 import React, { useMemo } from 'react';
+import { useVectorStore } from './store/store';
 
 export default function PointsComponent({ nodes, hoveredIdx, setHoveredIdx }) {
+    const lockedNodeId = useVectorStore((state) => state.lockedNodeId);
+    const setLockedNodeId = useVectorStore((state) => state.setLockedNodeId);
 
     const positions = useMemo(() => {
         const arr = new Float32Array(nodes.length * 3);
@@ -14,20 +17,35 @@ export default function PointsComponent({ nodes, hoveredIdx, setHoveredIdx }) {
 
     const handlePointerOver = (e) => {
         e.stopPropagation();
-        if (e.index !== undefined) {
+        document.body.style.cursor = 'crosshair';
+        if (e.index !== undefined && lockedNodeId === null) {
             setHoveredIdx(e.index);
-            document.body.style.cursor = 'crosshair';
         }
     };
 
     const handlePointerOut = (e) => {
         e.stopPropagation();
-        setHoveredIdx(null);
         document.body.style.cursor = 'default';
+        if (lockedNodeId === null) {
+            setHoveredIdx(null);
+        }
+    };
+
+    const handleClick = (e) => {
+        e.stopPropagation();
+        if (e.index !== undefined) {
+            if (lockedNodeId === e.index) {
+                setLockedNodeId(null);
+            } else {
+                setLockedNodeId(e.index);
+                setHoveredIdx(e.index);
+            }
+        }
     };
 
     return (
         <points
+            onClick={handleClick}
             onPointerOver={handlePointerOver}
             onPointerOut={handlePointerOut}
         >

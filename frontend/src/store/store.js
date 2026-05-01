@@ -34,6 +34,9 @@ export const useVectorStore = create((set, get) => ({
     activeNodeId: null,
     setActiveNodeId: (nodeId) => set({ activeNodeId: nodeId }),
 
+    lockedNodeId: null,
+    setLockedNodeId: (nodeId) => set({ lockedNodeId: nodeId }),
+
     searchPath: [],
     setSearchPath: (path) => set({ searchPath: path }),
 
@@ -49,6 +52,7 @@ export const useVectorStore = create((set, get) => ({
         searchResults: [],
         searchLatency: 0,
         activeNodeId: null,
+        lockedNodeId: null,
         searchQuery: ""
     }),
 
@@ -162,7 +166,7 @@ export const useVectorStore = create((set, get) => ({
         try {
             const res = await fetch(`${API_URL}/vectors/${id}`, { method: 'DELETE' });
             if (res.ok) {
-                set({ activeNodeId: null });
+                set({ activeNodeId: null, lockedNodeId: null });
                 await get().fetchGraph();
                 get().fetchMemory();
             }
