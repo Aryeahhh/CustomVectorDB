@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
+import { useVectorStore } from './store/store';
 
 export default function LoadingScreen() {
     const [progress, setProgress] = useState(0);
+    const backendStatus = useVectorStore((state) => state.backendStatus);
 
     useEffect(() => {
         let currentProgress = 0;
@@ -18,6 +20,29 @@ export default function LoadingScreen() {
 
         return () => clearInterval(intervalId);
     }, []);
+
+    const statusLine = () => {
+        if (backendStatus === 'idle') return null;
+        if (backendStatus === 'pinging') return (
+            <div className="text-on-surface flex items-center gap-2 mt-2">
+                <span className="w-2 h-2 bg-[#00f2ff] inline-block animate-pulse"></span>
+                Pinging AETHEROS backend... (cold boot — up to 60s)
+            </div>
+        );
+        if (backendStatus === 'awake') return (
+            <div className="flex items-center gap-2 mt-2" style={{ color: '#4ade80' }}>
+                <span className="w-2 h-2 inline-block" style={{ backgroundColor: '#4ade80' }}></span>
+                Backend online — loading graph topology...
+            </div>
+        );
+        if (backendStatus === 'timeout') return (
+            <div className="flex items-center gap-2 mt-2" style={{ color: '#f87171' }}>
+                <span className="w-2 h-2 inline-block" style={{ backgroundColor: '#f87171' }}></span>
+                Backend unreachable — check Render dashboard or refresh
+            </div>
+        );
+        return null;
+    };
 
     return (
         <div className="bg-background text-on-background min-h-[100vh] w-full flex flex-col justify-center items-center relative overflow-hidden selection:bg-tertiary-container selection:text-background absolute top-0 left-0 z-50">
@@ -70,11 +95,7 @@ export default function LoadingScreen() {
                     {progress > 20 && <div className="opacity-75">&gt; Memory allocation verified... OK</div>}
                     {progress > 50 && <div className="text-on-surface-variant">&gt; Connecting HNSW graph layers...</div>}
                     {progress > 80 && <div className="text-on-surface-variant">&gt; Indexing vector clusters...</div>}
-                    
-                    <div className="text-on-surface flex items-center gap-2 mt-2">
-                        <span className="w-2 h-2 bg-on-surface inline-block animate-pulse"></span>
-                        Awakening HNSW Topology (Waiting for backend API)...
-                    </div>
+                    {statusLine()}
                 </div>
             </main>
 
@@ -82,7 +103,7 @@ export default function LoadingScreen() {
                 <div className="border-l border-[#d97707] bg-[#d97707]/10 p-4 flex gap-4 items-start">
                     <div className="font-body text-body text-[#d97707] flex-1">
                         <strong className="block mb-1">⚠️ COLD BOOT:</strong>
-                        Free-tier Server Infrastructure waking from sleep (&lt; 45s)
+                        Free-tier Server Infrastructure waking from sleep (&lt; 60s)
                     </div>
                     <div className="font-data-sm text-data-sm text-[#d97707] opacity-50 tracking-widest">
                         SYS_MSG_02
@@ -92,3 +113,4 @@ export default function LoadingScreen() {
         </div>
     );
 }
+

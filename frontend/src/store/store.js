@@ -6,6 +6,31 @@ export const useVectorStore = create((set, get) => ({
     graphData: [],
     setGraphData: (data) => set({ graphData: data }),
 
+    // 'idle' | 'pinging' | 'awake' | 'timeout'
+    backendStatus: 'idle',
+
+    pingBackend: async () => {
+        const MAX_ATTEMPTS = 20;
+        const INTERVAL_MS = 3000;
+        set({ backendStatus: 'pinging' });
+        for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
+            try {
+                const res = await fetch(`${API_URL}/health`, { signal: AbortSignal.timeout(5000) });
+                if (res.ok) {
+                    set({ backendStatus: 'awake' });
+                    return true;
+                }
+            } catch {
+                // still sleeping
+            }
+            if (attempt < MAX_ATTEMPTS) {
+                await new Promise(r => setTimeout(r, INTERVAL_MS));
+            }
+        }
+        set({ backendStatus: 'timeout' });
+        return false;
+    },
+
     activeNodeId: null,
     setActiveNodeId: (nodeId) => set({ activeNodeId: nodeId }),
 

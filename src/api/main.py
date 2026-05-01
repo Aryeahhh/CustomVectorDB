@@ -77,6 +77,11 @@ def root():
     return RedirectResponse(url="/docs")
 
 
+@app.get("/health", include_in_schema=False)
+def health_check():
+    return {"status": "ok"}
+
+
 @app.post("/vectors", status_code=status.HTTP_201_CREATED)
 def ingest_vector(payload: VectorIngestRequest):
     if len(store.hnsw.nodes) >= MAX_NODES:
